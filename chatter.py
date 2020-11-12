@@ -31,14 +31,14 @@ def remove_control_characters(s):
     return "".join(ch for ch in s if unicodedata.category(ch)[0]!="C")
 class CustomClient(Client):
     def onMessage(self, mid, author_id, message_object, thread_id, thread_type, ts, metadata, msg, **kwargs):
-        # print('auth:',author_id);
-        # print("Thread type:",ThreadType.USER)
+
+
         if(thread_type!=ThreadType.USER):
             if("eliza" not in msg["body"].lower()):
                 return;
             else:
                 msg["body"] = msg["body"].lower().replace('eliza','')
-        if(author_id=="100028837630866"):
+        if(author_id==self.uid):
             return;
         # print('Recieved msg:',msg);
         print('\n\n\nRecieved Message:',msg["body"]);
