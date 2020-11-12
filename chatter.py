@@ -59,11 +59,11 @@ class CustomClient(Client):
                 # Client.reactToMessage(Client, mid,MessageReaction.LOVE);
 
 
+            
+                
             if("remove that shit" in msg["body"].lower()):
                 client.unsend(lastSent)
-                return
-
-            if("commit sudoku" in msg["body"].lower()):
+            elif("commit sudoku" in msg["body"].lower()):
                 exit()
             
             elif("fuck you bitch" in msg["body"].lower()):
