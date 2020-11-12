@@ -29,10 +29,14 @@ threads = [];
 
 def remove_control_characters(s):
     return "".join(ch for ch in s if unicodedata.category(ch)[0]!="C")
+
+
+
 class CustomClient(Client):
+    global lastSent
+    lastSent = ""
     def onMessage(self, mid, author_id, message_object, thread_id, thread_type, ts, metadata, msg, **kwargs):
-
-
+        global lastSent
         if(thread_type!=ThreadType.USER):
             if("eliza" not in msg["body"].lower()):
                 return;
@@ -54,8 +58,13 @@ class CustomClient(Client):
             # if("love you" in msg["body"].lower()):
                 # Client.reactToMessage(Client, mid,MessageReaction.LOVE);
 
+
+            if("remove that shit" in msg["body"].lower()):
+                client.unsend(lastSent)
+                return
+
             if("commit sudoku" in msg["body"].lower()):
-                exit();
+                exit()
             
             elif("fuck you bitch" in msg["body"].lower()):
                 reply = "🖕"
@@ -72,8 +81,9 @@ class CustomClient(Client):
             reply = eliza.initial()
         if reply is None:
             return;
+
         print("Replying:",reply)
-        client.sendMessage(reply,thread_id,thread_type)
+        lastSent = client.sendMessage(reply,thread_id,thread_type)
 
         pass
 
@@ -86,9 +96,12 @@ class CustomClient(Client):
 
 # Attempt a login with the session, and if it fails, just use the email & password
 client = CustomClient(email,passw, session_cookies=cookies)
+lastSent = ""
 def sendImg(url,tid,tt):
     print("image url",url)
     client.sendRemoteFiles(url,Message(),tid,tt)
+# def unSendMsg(mid):
+#     client.unsend(mid)
 
 
 client.listen()
