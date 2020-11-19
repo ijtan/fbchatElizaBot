@@ -68,10 +68,10 @@ class CustomClient(Client):
             
             elif("fuck you bitch" in msg["body"].lower()):
                 reply = "🖕"
-                # Client.reactToMessage(Client, mid,MessageReaction.ANGRY);
+                client.reactToMessage(Client, mid,MessageReaction.ANGRY);
             elif("show me" in msg["body"].lower()):
                 q = msg["body"].lower().split("show me")[1]
-                q = remove_control_characters(q).replace(" ", "")
+                q = remove_control_characters(q).replace(" ", "+")
                 url = google.randomImgSearch(q);
                 sendImg(url,thread_id, thread_type)
             else:
