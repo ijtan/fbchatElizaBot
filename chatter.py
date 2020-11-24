@@ -32,7 +32,7 @@ def remove_control_characters(s):
 
 class CustomClient(Client):
     def onCallStarted(mid, caller_id, is_video_call, thread_id, thread_type, ts, metadata, msg):
-        client.sendMessage("Stop calling cunt",thread_id,thread_type)
+        client.sendMessage("Stop calling you cunt!",thread_id,thread_type)
 
 
 
@@ -42,6 +42,10 @@ class CustomClient(Client):
     lastSent = lastSauce = ""
     def onMessage(self, mid, author_id, message_object, thread_id, thread_type, ts, metadata, msg, **kwargs):
         global lastSent
+        global lastSauce
+
+        senderInfo = client.fetchUserInfo(author_id).get(author_id)
+        senderName = senderInfo.first_name
 
         if message_object.text is None:
             print("no body found in message!")
@@ -67,7 +71,7 @@ class CustomClient(Client):
         if(author_id==self.uid):
             return
         
-        print('\n\n\nRecieved Message:',text);
+        print('\n\n\nRecieved Message:',text," from:",senderInfo.name);
         reply = ""
 
         if "love" in text:
@@ -93,7 +97,7 @@ class CustomClient(Client):
             q = remove_control_characters(q).replace(" ", "+")
             url = google.randomImgSearch(q)
             if url == -1:
-                reply = "Api Overloaded!"
+                reply = "Sorry, "+senderName+" but I am not able to send Images at the moment :( !"
             elif url is None:
                 print('no image found')
                 reply = "Nothing found boss!"
@@ -114,7 +118,7 @@ class CustomClient(Client):
 
 # Attempt a login with the session, and if it fails, just use the email & password
 client = CustomClient(email,passw, session_cookies=cookies)
-lastSent = ""
+lastSent = lastSauce = ""
 def sendImg(url,tid,tt):
     print("image url",url)
     
