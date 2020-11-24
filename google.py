@@ -22,8 +22,13 @@ def randomImgSearch(q):
         'https://www.googleapis.com/customsearch/v1?key=' + API_KEY + '&cx=' +
         SEARCH_ENGINE_ID + '&q=' + q + '&searchType=image')
 
-    with urllib.request.urlopen(request) as f:
-        data = f.read().decode('utf-8')
+    data = ""
+    try:
+        with urllib.request.urlopen(request) as f:
+            data = f.read().decode('utf-8')
+    except: 
+        print("API OVERLOADED")
+        return -1
         
     data = json.loads(data)
     # print(data)

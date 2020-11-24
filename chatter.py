@@ -1,5 +1,5 @@
 from eliza.eliza import Eliza
-from fbchat import Client
+from fbchat import Client,TypingStatus
 from fbchat.models import *
 import json
 import google
@@ -31,49 +31,85 @@ def remove_control_characters(s):
 
 
 class CustomClient(Client):
+    def onCallStarted(mid, caller_id, is_video_call, thread_id, thread_type, ts, metadata, msg):
+        client.sendMessage("Stop calling cunt",thread_id,thread_type)
+
+
+
+
     global lastSent
-    lastSent = ""
+    global lastSauce
+    lastSent = lastSauce = ""
     def onMessage(self, mid, author_id, message_object, thread_id, thread_type, ts, metadata, msg, **kwargs):
         global lastSent
-        if(thread_type!=ThreadType.USER):
-            if("eliza" not in msg["body"].lower()):
-                return;
-            else:
-                msg["body"] = msg["body"].lower().replace('eliza','')
+
+        if message_object.text is None:
+            print("no body found in message!")
+            return
+        if "hahaha" in message_object.text.lower():
+            client.reactToMessage(mid, MessageReaction.SMILE)
+
+            
+        if thread_type!=ThreadType.USER and "eliza" not in message_object.text.lower():
+            print("group detected")
+            if message_object.replied_to is None:
+                return
+            elif message_object.replied_to.author != self.uid:
+                return
+
+        message_object.text = message_object.text.lower().replace('eliza','')
+
+
+        message_object.text = message_object.text.lower().replace('eliza','')
+        text = message_object.text;
+
+
         if(author_id==self.uid):
-            return;
-        # print('Recieved msg:',msg);
-        print('\n\n\nRecieved Message:',msg["body"]);
+            return
+        
+        print('\n\n\nRecieved Message:',text);
         reply = ""
-            # if("love you" in msg["body"].lower()):
-                # Client.reactToMessage(Client, mid,MessageReaction.LOVE);           
-                
-        if("remove that shit" in msg["body"].lower()):
+
+        if "love" in text:
+            client.reactToMessage(mid, MessageReaction.LOVE)
+        if "wow" in text:
+            client.reactToMessage(mid, MessageReaction.WOW)
+        if "grr" in text:
+            client.reactToMessage(mid, MessageReaction.ANGRY)
+        if "give sauce" in text or "give source" in text:
+            reply = lastSauce    
+        elif "remove that shit" in text:
             client.unsend(lastSent)
-        elif("commit sudoku" in msg["body"].lower()):
+        elif "commit sudoku" in text:
             exit()
         
-        elif("fuck you bitch" in msg["body"].lower()):
+        elif "fuck you bitch" in text:
+            user = client.fetchUserInfo(author_id)
+            print(user)
             reply = "🖕"
             # Client.reactToMessage(Client, mid,MessageReaction.ANGRY);
-        elif("show me" in msg["body"].lower()):
-            q = msg["body"].lower().split("show me")[1]
+        elif "show me" in text:
+            q = text.split("show me")[1]
             q = remove_control_characters(q).replace(" ", "+")
             url = google.randomImgSearch(q)
-            if url is None:
+            if url == -1:
+                reply = "Api Overloaded!"
+            elif url is None:
                 print('no image found')
                 reply = "Nothing found boss!"
             else:
+                lastSauce = url;
                 lastSent = sendImg(url,thread_id, thread_type)
             
         else:
-            reply = eliza.respond(msg["body"])
+            reply = eliza.respond(text)
 
         if reply is None:
             return;
 
         print("Replying:",reply)
-        lastSent = client.sendMessage(reply,thread_id,thread_type)
+        lastSent = client.send(Message(text=reply,reply_to_id=mid),thread_id,thread_type)
+        
 
 
 # Attempt a login with the session, and if it fails, just use the email & password
@@ -81,6 +117,7 @@ client = CustomClient(email,passw, session_cookies=cookies)
 lastSent = ""
 def sendImg(url,tid,tt):
     print("image url",url)
+    
     return client.sendRemoteFiles(url,Message(),tid,tt)
 # def unSendMsg(mid):
 #     client.unsend(mid)
