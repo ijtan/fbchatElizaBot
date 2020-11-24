@@ -27,11 +27,21 @@ def randomImgSearch(q):
         
     data = json.loads(data)
     # print(data)
+    if data.get('items') is None:
+        return None
     results = data['items']
     url = random.choice(results)['link']
+    
     return (url)
-# urllib.request.urlretrieve(url, './image')
-# imagetype = imghdr.what('./image')
+
+    
+    data = urlopen(url).read()
+
+    imagetype = imghdr.what(data)
+    if imagetype is None:
+        print("bad image found")
+        return None
+    return(url)
 
 # if not type(imagetype) is None:
 #     os.rename('./image', './image.' + imagetype)

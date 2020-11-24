@@ -23,9 +23,7 @@ except:
     pass
 
 eliza = Eliza()
-eliza.load('eliza\doctor.txt')
-
-threads = [];
+eliza.load('eliza/doctor.txt')
 
 def remove_control_characters(s):
     return "".join(ch for ch in s if unicodedata.category(ch)[0]!="C")
@@ -47,51 +45,35 @@ class CustomClient(Client):
         # print('Recieved msg:',msg);
         print('\n\n\nRecieved Message:',msg["body"]);
         reply = ""
-
-
-
-
-
-        if(thread_id in threads):
-
-
             # if("love you" in msg["body"].lower()):
-                # Client.reactToMessage(Client, mid,MessageReaction.LOVE);
-
-
-            
+                # Client.reactToMessage(Client, mid,MessageReaction.LOVE);           
                 
-            if("remove that shit" in msg["body"].lower()):
-                client.unsend(lastSent)
-            elif("commit sudoku" in msg["body"].lower()):
-                exit()
-            
-            elif("fuck you bitch" in msg["body"].lower()):
-                reply = "🖕"
-                # Client.reactToMessage(Client, mid,MessageReaction.ANGRY);
-            elif("show me" in msg["body"].lower()):
-                q = msg["body"].lower().split("show me")[1]
-                q = remove_control_characters(q).replace(" ", "")
-                url = google.randomImgSearch(q);
-                sendImg(url,thread_id, thread_type)
+        if("remove that shit" in msg["body"].lower()):
+            client.unsend(lastSent)
+        elif("commit sudoku" in msg["body"].lower()):
+            exit()
+        
+        elif("fuck you bitch" in msg["body"].lower()):
+            reply = "🖕"
+            # Client.reactToMessage(Client, mid,MessageReaction.ANGRY);
+        elif("show me" in msg["body"].lower()):
+            q = msg["body"].lower().split("show me")[1]
+            q = remove_control_characters(q).replace(" ", "+")
+            url = google.randomImgSearch(q)
+            if url is None:
+                print('no image found')
+                reply = "Nothing found boss!"
             else:
-                reply = eliza.respond(msg["body"])
+                lastSent = sendImg(url,thread_id, thread_type)
+            
         else:
-            threads.append(thread_id)
-            reply = eliza.initial()
+            reply = eliza.respond(msg["body"])
+
         if reply is None:
             return;
 
         print("Replying:",reply)
         lastSent = client.sendMessage(reply,thread_id,thread_type)
-
-        pass
-
-
-
-
-
-
 
 
 # Attempt a login with the session, and if it fails, just use the email & password
@@ -99,7 +81,7 @@ client = CustomClient(email,passw, session_cookies=cookies)
 lastSent = ""
 def sendImg(url,tid,tt):
     print("image url",url)
-    client.sendRemoteFiles(url,Message(),tid,tt)
+    return client.sendRemoteFiles(url,Message(),tid,tt)
 # def unSendMsg(mid):
 #     client.unsend(mid)
 
@@ -107,23 +89,9 @@ def sendImg(url,tid,tt):
 client.listen()
 
 
-
-
-# ... Do stuff with the client here
-
-
-
-
-
-
 # Save the session again
 with open('session.json', 'w') as f:
     json.dump(client.getSession(), f)
-
-
-
-
-
 
 
 if not client.isLoggedIn():
