@@ -50,12 +50,19 @@ class CustomClient(Client):
         if message_object.text is None:
             print("no body found in message!")
             return
-        if "hahaha" in message_object.text.lower():
+        text = message_object.text.lower()
+        if "hahaha" in text:
             client.reactToMessage(mid, MessageReaction.SMILE)
-
+        if "love" in text:
+            client.reactToMessage(mid, MessageReaction.LOVE)
+        if "wow" in text:
+            client.reactToMessage(mid, MessageReaction.WOW)
+        if "grr" in text:
+            client.reactToMessage(mid, MessageReaction.ANGRY)
+        if "sad" in text:
+            client.reactToMessage(mid, MessageReaction.SAD)
             
         if thread_type!=ThreadType.USER and "eliza" not in message_object.text.lower():
-            print("group detected")
             if message_object.replied_to is None:
                 return
             elif message_object.replied_to.author != self.uid:
@@ -74,12 +81,6 @@ class CustomClient(Client):
         print('\n\n\nRecieved Message:',text," from:",senderInfo.name);
         reply = ""
 
-        if "love" in text:
-            client.reactToMessage(mid, MessageReaction.LOVE)
-        if "wow" in text:
-            client.reactToMessage(mid, MessageReaction.WOW)
-        if "grr" in text:
-            client.reactToMessage(mid, MessageReaction.ANGRY)
         if "give sauce" in text or "give source" in text:
             reply = lastSauce    
         elif "remove that shit" in text:
