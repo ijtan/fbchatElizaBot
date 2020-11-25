@@ -13,6 +13,9 @@ with open("creds.json", 'r') as f:
 print('email:',email)
 print('password:',passw)
 
+blacklist = open("blacklist.txt",'r').read()
+blacklist.split('\n')
+
 cookies = ""
 try:
     # Load the session cookies
@@ -34,7 +37,7 @@ class CustomClient(Client):
     def onCallStarted(mid, caller_id, is_video_call, thread_id, thread_type, ts, metadata, msg):
         client.sendMessage("Stop calling you cunt!",thread_id,thread_type)
 
-
+    
 
 
     global lastSent
@@ -43,9 +46,15 @@ class CustomClient(Client):
     def onMessage(self, mid, author_id, message_object, thread_id, thread_type, ts, metadata, msg, **kwargs):
         global lastSent
         global lastSauce
+        done = False
+        reply = ""
 
         senderInfo = client.fetchUserInfo(author_id).get(author_id)
         senderName = senderInfo.first_name
+
+        if author_id in blacklist:
+            reply = "fuck you black cunt"
+            done = True
 
         if message_object.text is None:
             print("no body found in message!")
@@ -79,12 +88,18 @@ class CustomClient(Client):
             return
         
         print('\n\n\nRecieved Message:',text," from:",senderInfo.name);
-        reply = ""
-
-        if "give sauce" in text or "give source" in text:
+        
+        if done:
+            pass
+        elif "give sauce" in text or "give source" in text:
             reply = lastSauce    
         elif "remove that shit" in text:
-            client.unsend(lastSent)
+            if message_object.replied_to is None:
+                client.unsend(lastSent)
+                return
+            else:
+                client.unsend(message_object.replied_to.uid)
+                return
         elif "commit sudoku" in text:
             exit()
         
