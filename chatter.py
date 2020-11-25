@@ -35,7 +35,7 @@ def remove_control_characters(s):
 
 class CustomClient(Client):
     def onCallStarted(mid, caller_id, is_video_call, thread_id, thread_type, ts, metadata, msg):
-        client.sendMessage("Stop calling you cunt!",thread_id,thread_type)
+        client.sendMessage("Stop calling grr!",thread_id,thread_type)
 
     
 
@@ -53,20 +53,20 @@ class CustomClient(Client):
         senderName = senderInfo.first_name
 
         if author_id in blacklist:
-            reply = "fuck you black cunt"
-            done = True
+            return
+            
 
         if message_object.text is None:
             print("no body found in message!")
             return
         text = message_object.text.lower()
-        if "hahaha" in text:
+        if "hahaha" in text or "bhahha" in text or "funny" in text:
             client.reactToMessage(mid, MessageReaction.SMILE)
-        if "love" in text:
+        if "love" in text or "xxxx" in text:
             client.reactToMessage(mid, MessageReaction.LOVE)
         if "wow" in text:
             client.reactToMessage(mid, MessageReaction.WOW)
-        if "grr" in text:
+        if "grr" in text or "angry" in text:
             client.reactToMessage(mid, MessageReaction.ANGRY)
         if "sad" in text:
             client.reactToMessage(mid, MessageReaction.SAD)
@@ -93,17 +93,17 @@ class CustomClient(Client):
             pass
         elif "give sauce" in text or "give source" in text:
             reply = lastSauce    
-        elif "remove that shit" in text:
+        elif "remove that!" in text:
             if message_object.replied_to is None:
                 client.unsend(lastSent)
                 return
             else:
                 client.unsend(message_object.replied_to.uid)
                 return
-        elif "commit sudoku" in text:
+        elif "commit sudoku!" in text:
             exit()
         
-        elif "fuck you bitch" in text:
+        elif "fuck you" in text:
             user = client.fetchUserInfo(author_id)
             print(user)
             reply = "🖕"
