@@ -93,7 +93,7 @@ class CustomClient(Client):
             pass
         elif "give sauce" in text or "give source" in text:
             reply = lastSauce    
-        elif "remove that!" in text:
+        elif "remove that" in text:
             if message_object.replied_to is None:
                 client.unsend(lastSent)
                 return

@@ -7,6 +7,7 @@ def getMessage(message_id):
 
 def addMessage(message_object):
     class csv.DictWriter(f, fieldnames, restval='', extrasaction='raise', dialect='excel', *args, **kwds)
+    DictWriter.writeheader()
 
 
 def addReact(react, message_id)
