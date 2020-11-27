@@ -8,7 +8,7 @@ Idk this was quite a fun project, I created a facebook wrapper for a bot, (credi
 -- Blacklisting\
 -- Only responds to messages if "eliza" is in the message, or someone replies to her messages (using the messenger reply)\
 -- Reacts to some obvious reactions (such as HAHA react when a message contains "hahaha" etc.)\
---Data collection (and further down the road spits out some statistics on the data collected)\
+-- Data collection (and further down the road spits out some statistics on the data collected)\
 \
 \
 Quite barebones and not meant to do anything special really. 
