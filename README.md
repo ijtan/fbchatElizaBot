@@ -1,4 +1,4 @@
-# Facebook wrapper for (anythhing but applied to) eliza bot
+# Facebook wrapper for [any bot] eliza bot
 Remember that computer theraprist from 1966 (probably not)? It has been modernized ! \
 \
 Idk this was quite a fun project, I created a facebook wrapper for a bot, (credits to the original creator), then added a few fancy features such as:\
