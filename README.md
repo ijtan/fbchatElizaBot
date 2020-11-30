@@ -1,2 +1,14 @@
-# fbchatElizaBot
-Facebook Messenger Eliza Bot -> replies to messages using the eliza bot concept
+# Facebook wrapper for [any bot] eliza bot
+Remember that computer theraprist from 1966 (probably not)? It has been modernized ! \
+\
+Idk this was quite a fun project, I created a facebook wrapper for a bot, (credits to the original creator), then added a few fancy features such as:\
+\
+\
+-- Sends Images using the Google programmable console\
+-- Blacklisting\
+-- Only responds to messages if "eliza" is in the message, or someone replies to her messages (using the messenger reply)\
+-- Reacts to some obvious reactions (such as HAHA react when a message contains "hahaha" etc.)\
+-- Data collection (and further down the road spits out some statistics on the data collected)\
+\
+\
+Quite barebones and not meant to do anything special really. 
