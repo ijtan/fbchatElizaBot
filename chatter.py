@@ -4,7 +4,6 @@ from fbchat.models import *
 import json
 import google
 import unicodedata
-import dataCollector
 
 with open("creds.json", 'r') as f:
     creds = json.load(f)
@@ -70,10 +69,6 @@ class CustomClient(Client):
             client.reactToMessage(mid, MessageReaction.ANGRY)
         if "sad" in text:
             client.reactToMessage(mid, MessageReaction.SAD)
-
-        tmp = message_object
-        dataCollector.addMessage(thread_id, tmp)
-        del tmp
 
         if thread_type!=ThreadType.USER and "eliza" not in message_object.text.lower():
             if message_object.replied_to is None:
