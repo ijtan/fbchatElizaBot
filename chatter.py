@@ -58,7 +58,15 @@ class CustomClient(Client):
         if message_object.text is None:
             print("no body found in message!")
             return
+
+
+        if self.uid == author_id:
+            return
+        
+
+
         text = message_object.text.lower()
+        
         if "hahaha" in text or "bhahha" in text or "funny" in text:
             client.reactToMessage(mid, MessageReaction.SMILE)
         if "love" in text or "xxxx" in text:
@@ -87,6 +95,28 @@ class CustomClient(Client):
         
         if done:
             pass
+        elif "@everyone" in text:
+            # if thread_type != ThreadType.GROUP:
+            #     return
+            # group = client.fetchGroupInfo(thread_id)[thread_id]
+            # mentions = [Mention(uid, 0, len("@everyone")) for uid in group.participants]
+            # print("Mentions: ",mentions)
+            # lastSent = client.send(Message(text="@everyone", mentions=mentions), thread_id=thread_id, thread_type=thread_type)
+            group = client.fetchThreadInfo(thread_id)[thread_id]
+            author = self.fetchUserInfo(author_id)[author_id].name
+            # logger.info('@everyone in '+str(group.name)+" by: "+author)
+            mentions = []
+            text = "@everyone: "
+            for i in group.participants:
+                usertag = "@"+self.fetchUserInfo(i)[i].name
+                mstart = len(text)
+                text += usertag+ " / "
+                mlen = len(usertag)
+
+                mentions.append(Mention(str(i), offset=mstart, length=mlen))
+            text = text[:-3]
+            lastSent = self.send(Message(text=text, mentions=mentions), thread_id=thread_id, thread_type=thread_type)
+            return
         elif "give sauce" in text or "give source" in text:
             reply = lastSauce    
         elif "remove that" in text or "delete that" in text:
