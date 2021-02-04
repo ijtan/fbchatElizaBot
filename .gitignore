@@ -129,5 +129,6 @@ dmypy.json
 .pyre/
 creds.json
 session.json
+bookmarks.json
 blacklist.txt
 messages.csv

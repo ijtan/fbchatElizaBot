@@ -4,6 +4,7 @@ from fbchat.models import *
 import json
 import google
 import unicodedata
+import os
 
 with open("creds.json", 'r') as f:
     creds = json.load(f)
@@ -11,19 +12,32 @@ with open("creds.json", 'r') as f:
     passw = creds["passw"]
 
 print('email:',email)
+lng = len(passw)
+passw = passw[:2]
+for x in range(2,lng):
+    passw+='*'
 print('password:',passw)
 
 blacklist = open("blacklist.txt",'r').read()
 blacklist.split('\n')
 
 cookies = ""
-try:
-    # Load the session cookies
-    with open('session.json', 'r') as f:
-        cookies = json.load(f)
-except:
-    # If it fails, never mind, we'll just login again
-    pass
+with open('session.json', 'r') as f:
+    cookies = json.load(f)
+
+bookmarks = {}
+if os.path.exists('bookmarks.json'):
+    with open('bookmarks.json', 'r') as f:
+        try:
+            bookmarks = json.load(f)
+        except:
+            print("Failed to load bookmarks!")
+else:    
+    with open('bookmarks.json', 'w') as f:        
+            json.dump(bookmarks, f)
+        
+        
+
 
 eliza = Eliza()
 eliza.load('eliza/doctor.txt')
@@ -32,6 +46,10 @@ def remove_control_characters(s):
     return "".join(ch for ch in s if unicodedata.category(ch)[0]!="C")
 
 
+def updateBookmarks():
+    with open('bookmarks.json', 'w') as f:  
+        json.dump(bookmarks, f)
+
 
 class CustomClient(Client):
     def onCallStarted(mid, caller_id, is_video_call, thread_id, thread_type, ts, metadata, msg):
@@ -39,7 +57,7 @@ class CustomClient(Client):
 
     
 
-
+    global bookmarks
     global lastSent
     global lastSauce
     lastSent = lastSauce = ""
@@ -118,7 +136,70 @@ class CustomClient(Client):
             lastSent = self.send(Message(text=text, mentions=mentions), thread_id=thread_id, thread_type=thread_type)
             return
         elif "give sauce" in text or "give source" in text:
-            reply = lastSauce    
+            reply = lastSauce   
+
+
+
+        elif "new bookmark" in text or "add bookmark" in text:
+            if bookmarks.get(thread_id) is None:
+                bookmarks[thread_id] = {}
+
+            if message_object.replied_to is None:
+                reply = "bookmark does not reply to anything"
+                
+            else:    
+                bmID = message_object.replied_to.uid
+                bmKey = text.split("bookmark")[1]
+                # bmText = message_object.replied_to.text.lower()
+                bookmarks[thread_id][bmKey] = bmID
+                reply = "added new bookmark!"  
+            updateBookmarks()
+
+
+        elif "get bookmarks" in text or "get all bookmarks" in text:
+            if bookmarks.get(thread_id) is None:
+                bookmarks[thread_id] = {}
+
+            keys = bookmarks[thread_id].keys()
+            if(len(keys)==0):
+                reply = "no bookmarks found!"
+            else:
+                i = 1
+                for k in keys:
+                    reply+=f": {k}\n"
+                    i+=1
+
+
+        elif "get bookmark" in text:
+
+            bmID = text.split("bookmark")[1]
+
+            if bookmarks.get(thread_id) is None:
+                bookmarks[thread_id] = {}
+
+            if bookmarks[thread_id].get(bmID) is not None:
+                mid = bookmarks[thread_id].get(bmID)
+                reply = '.'
+            else:
+                reply = "Could not find bookmark"
+
+        elif "remove bookmark" in text or "delete bookmark" in text:
+
+            bmID = text.split("bookmark")[1]
+
+            if bookmarks.get(thread_id) is None:
+                bookmarks[thread_id] = {}
+
+            if bookmarks[thread_id][bmID] is not None:
+                del bookmarks[thread_id][bmID]
+                reply = 'Deleted Bookmark!'
+            else:
+                reply = "Could not find bookmark"
+            updateBookmarks()
+
+
+
+
         elif "remove that" in text or "delete that" in text:
             if message_object.replied_to is None:
                 client.unsend(lastSent)
@@ -126,8 +207,9 @@ class CustomClient(Client):
             else:
                 client.unsend(message_object.replied_to.uid)
                 return
-        elif "commit sudoku!" in text:
-            exit()
+
+        # elif "commit sudoku!" in text:
+        #     exit()
         
         elif "fuck you" in text:
             user = client.fetchUserInfo(author_id)

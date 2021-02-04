@@ -5,7 +5,6 @@ import imghdr
 import sys
 import urllib.request
 import urllib.parse
-
 with open("creds.json", 'r') as f:
     creds = json.load(f)
     api = creds["api"]
@@ -14,7 +13,7 @@ with open("creds.json", 'r') as f:
 API_KEY = api  # put your API key here
 SEARCH_ENGINE_ID = sid  # you also have to generate a search engine token
 
-def randomImgSearch(q):
+def randomImgSearch(q,oldURL=None):
     for arg in sys.argv[1:]:
         q += urllib.parse.quote(arg) + '+'
 
@@ -37,16 +36,22 @@ def randomImgSearch(q):
     results = data['items']
     url = random.choice(results)['link']
     
-    return (url)
+    # return (url)
 
-    
-    data = urlopen(url).read()
-
-    imagetype = imghdr.what(data)
-    if imagetype is None:
-        print("bad image found")
+    if oldURL is not None and url==oldURL:
         return None
-    return(url)
 
+    data = urllib.request.urlopen(url).read()
+
+    imagetype = imghdr.what(None,data)
+    if imagetype is None or imagetype=='':
+        print("bad image found... Rerunning")
+
+        newURL = randomImgSearch(q,url)
+        # os.remove(data)
+        return newURL
+    # os.remove(data)
+    print('found image of type:',imagetype)
+    return url
 # if not type(imagetype) is None:
 #     os.rename('./image', './image.' + imagetype)
