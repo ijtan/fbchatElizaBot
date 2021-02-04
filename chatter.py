@@ -199,7 +199,6 @@ class CustomClient(Client):
 
 
 
-
         elif "remove that" in text or "delete that" in text:
             if message_object.replied_to is None:
                 client.unsend(lastSent)
