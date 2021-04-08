@@ -2,7 +2,7 @@
 Remember that computer theraprist from 1966 (probably not)? It has been modernized ! 
 \
 Idk this was quite a fun project, I created a facebook wrapper for a bot, (credits to the original creator), then added a few fancy features such as:
-\
+
 - Send Images using the Google programmable console
 - Blacklisting of Users
 - Responding to messages if "eliza" is in the message, or someone replies to her messages (using the messenger reply) 
