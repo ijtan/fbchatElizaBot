@@ -1,3 +1,6 @@
+# Deprecation
+This bot is no longer functional as the underlying facebook chat interface is no longer supported. 
+
 # Facebook wrapper for [any bot] eliza bot
 Remember that computer theraprist from 1966 (probably not)? It has been modernized ! 
 \
